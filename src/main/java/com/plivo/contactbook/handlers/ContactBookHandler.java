@@ -10,12 +10,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
-/*
-    Adding, editing, deleting
-    Pagination
-    testing: unit and integration.
- */
-
 @RestController
 public class ContactBookHandler {
 
@@ -41,27 +35,7 @@ public class ContactBookHandler {
         if(prevCriterion == null || prevCriterion != criterion){
             prevCriterion = criterion;
             if (searchBy.equalsIgnoreCase(NAME)){
-                ArrayList<Contact> contacts = (ArrayList)ContactBook.getContactsByName(criterion);
-                int strength = contacts.size();
-                int quotient = strength / pageSize;
-                int remainder = strength % pageSize;
-
-                int counter = 0;
-                for (int i = 0; i < quotient; i++) {
-                    Collection<Contact> collection = new ArrayList<>();
-                    for (int j = 0; j < pageSize; j++) {
-                        collection.add(contacts.get(counter++));
-                    }
-                    pages.put(i+1, collection);
-                }
-                if(remainder > 0){
-                    int index = contacts.size()-1;
-                    Collection<Contact> collection = new ArrayList<>();
-                    for (int i = 0; i < remainder; i++) {
-                        collection.add(contacts.get(index--));
-                    }
-                    pages.put(pages.size()+1, collection);
-                }
+                paginate(criterion, pages, pageSize);
             }
             Collection<Contact> collection = pages.get(pageNum);
             return collection;
@@ -69,6 +43,30 @@ public class ContactBookHandler {
             return pages.get(pageNum);
         }
 
+    }
+
+    private void paginate(@PathVariable String criterion, HashMap<Integer, Collection<Contact>> pages, int pageSize) {
+        ArrayList<Contact> contacts = (ArrayList) ContactBook.getContactsByName(criterion);
+        int strength = contacts.size();
+        int quotient = strength / pageSize;
+        int remainder = strength % pageSize;
+
+        int counter = 0;
+        for (int i = 0; i < quotient; i++) {
+            Collection<Contact> collection = new ArrayList<>();
+            for (int j = 0; j < pageSize; j++) {
+                collection.add(contacts.get(counter++));
+            }
+            pages.put(i+1, collection);
+        }
+        if(remainder > 0){
+            int index = contacts.size()-1;
+            Collection<Contact> collection = new ArrayList<>();
+            for (int i = 0; i < remainder; i++) {
+                collection.add(contacts.get(index--));
+            }
+            pages.put(pages.size()+1, collection);
+        }
     }
 
     @RequestMapping(value = "/contactbook", method = RequestMethod.GET)
