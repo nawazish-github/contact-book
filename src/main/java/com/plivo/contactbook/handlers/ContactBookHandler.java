@@ -6,7 +6,6 @@ import com.plivo.contactbook.models.EditContact;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -25,7 +24,7 @@ public class ContactBookHandler {
     @RequestMapping(value = "/contactbook/{criterion}", method = RequestMethod.GET)
     public Collection<Contact> getContact(@PathVariable String criterion,
                                           @RequestHeader("search-by") String searchBy,
-                                          @RequestParam(defaultValue = "2") String size,
+                                          @RequestParam(defaultValue = "10") String size,
                                           @RequestParam (defaultValue = "1") String pageNo){
 
         HashMap<Integer, Collection<Contact>> pages = new HashMap<>();
